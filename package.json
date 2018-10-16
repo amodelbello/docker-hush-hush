@@ -1,0 +1,15 @@
+{
+  "name": "docker-hush-hush",
+  "version": "1.0.0",
+  "description": "Module to get docker secrets",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "docker",
+    "secrets"
+  ],
+  "author": "Amo DelBello",
+  "license": "ISC"
+}
