@@ -4,12 +4,17 @@
   "description": "Module to get docker secrets",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "docker",
     "secrets"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amodelbello/docker-hush-hush.git"
+  },
   "author": "Amo DelBello",
   "license": "ISC"
 }
