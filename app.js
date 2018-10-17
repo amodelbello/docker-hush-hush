@@ -12,14 +12,39 @@ function isJsonLike(content) {
   return true;
 }
 
+function formatSecret(pathToSecret) {
+  let data = fs.readFileSync(pathToSecret, 'utf8')
+    .toString()
+    .trim()
+    .replace(/'/g, '"')
+  ;
+
+  if (isJsonLike(data)) {
+    data = JSON.parse(data);
+  }
+
+  return data;
+}
+
+function getFullPath(basePath, file) {
+  return path.join(basePath, file);
+}
+
 class Hush {
   constructor(secretsDirectory = DEFAULT_SECRETS_DIRECTORY) {
-    this.setPath(secretsDirectory);
+    this.setBasePath(secretsDirectory);
     this.secrets = {};
   }
 
-  setPath(secretsDirectory) {
+  setBasePath(secretsDirectory) {
     this.secretsDirectory = secretsDirectory;
+  }
+
+  getSecret(secret) {
+    const fullPath = getFullPath(this.secretsDirectory, secret);
+    const data = formatSecret(fullPath);
+
+    return data;
   }
 
   getAllSecrets() {
@@ -27,19 +52,8 @@ class Hush {
       const files = fs.readdirSync(this.secretsDirectory);
 
       files.forEach((file) => {
-        const fullPath = path.join(this.secretsDirectory, file);
-        let data = fs.readFileSync(fullPath, 'utf8')
-          .toString()
-          .trim()
-          .replace(/'/g, '"')
-        ;
-
-        if (isJsonLike(data)) {
-          data = JSON.parse(data);
-        }
-
-        this.secrets[file] = data;
-
+        const fullPath = getFullPath(this.secretsDirectory, file);
+        this.secrets[file] = formatSecret(fullPath);
       });
     } 
 
