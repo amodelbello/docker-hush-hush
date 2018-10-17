@@ -13,13 +13,18 @@ function isJsonLike(content) {
 }
 
 function formatSecret(pathToSecret) {
-  let data = fs.readFileSync(pathToSecret, 'utf8')
-    .toString()
-    .trim()
-    .replace(/'/g, '"')
-  ;
+  let data;
+  try {
+    data = fs.readFileSync(pathToSecret, 'utf8')
+      .toString()
+      .trim()
+      .replace(/'/g, '"')
+    ;
+  } catch (e) {
+    data = null;
+  }
 
-  if (isJsonLike(data)) {
+  if (data && isJsonLike(data)) {
     data = JSON.parse(data);
   }
 
@@ -55,7 +60,9 @@ class Hush {
         const fullPath = getFullPath(this.secretsDirectory, file);
         this.secrets[file] = formatSecret(fullPath);
       });
-    } 
+    } else {
+      this.secrets = {};
+    }
 
     return this.secrets;
   }

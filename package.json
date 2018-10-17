@@ -1,11 +1,11 @@
 {
   "name": "docker-hush-hush",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Module to get docker secrets",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage"
   },
   "keywords": [
     "docker",
@@ -16,5 +16,8 @@
     "url": "https://github.com/amodelbello/docker-hush-hush.git"
   },
   "author": "Amo DelBello",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^23.6.0"
+  }
 }
