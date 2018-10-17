@@ -3,6 +3,15 @@ const path = require('path');
 
 const DEFAULT_SECRETS_DIRECTORY = '/run/secrets';
 
+function isJsonLike(content) {
+  try {
+    JSON.parse(content);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 class Hush {
   constructor(secretsDirectory = DEFAULT_SECRETS_DIRECTORY) {
     this.setPath(secretsDirectory);
@@ -17,16 +26,24 @@ class Hush {
     if (fs.existsSync(this.secretsDirectory)) {
       const files = fs.readdirSync(this.secretsDirectory);
 
-      files.forEach((file, index) => {
+      files.forEach((file) => {
         const fullPath = path.join(this.secretsDirectory, file);
-        const key = file;
-        const data = fs.readFileSync(fullPath, 'utf8').toString().trim();
+        let data = fs.readFileSync(fullPath, 'utf8')
+          .toString()
+          .trim()
+          .replace(/'/g, '"')
+        ;
 
-        this.secrets[key] = data;
+        if (isJsonLike(data)) {
+          data = JSON.parse(data);
+        }
+
+        this.secrets[file] = data;
+
       });
+    } 
 
-      return this.secrets;
-    }
+    return this.secrets;
   }
 };
 
