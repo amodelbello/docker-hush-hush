@@ -12,6 +12,22 @@ function isJsonLike(content) {
   return true;
 }
 
+function isObject(obj) {
+  if (obj.constructor !== Object) {
+    return false;
+  }
+
+  return true;
+}
+
+function objectIsEmpty(obj) {
+  for (key in obj) {
+    return false;
+  }
+
+  return true;
+}
+
 function formatSecret(pathToSecret) {
   let data;
   try {
@@ -28,6 +44,7 @@ function formatSecret(pathToSecret) {
     data = JSON.parse(data);
   }
 
+  Hush.fileAccessed();
   return data;
 }
 
@@ -38,7 +55,17 @@ function getFullPath(basePath, file) {
 class Hush {
   constructor(secretsDirectory = DEFAULT_SECRETS_DIRECTORY) {
     this.setBasePath(secretsDirectory);
+    this.useCache = true;
     this.secrets = {};
+  }
+
+  // For unit test spying in conjunction with cache
+  static fileAccessed() {
+    return true;
+  }
+
+  disableCache() {
+    this.useCache = false;
   }
 
   setBasePath(secretsDirectory) {
@@ -46,13 +73,26 @@ class Hush {
   }
 
   getSecret(secret) {
-    const fullPath = getFullPath(this.secretsDirectory, secret);
-    const data = formatSecret(fullPath);
+    if (this.useCache && this.secrets[secret] !== undefined) {
+      return this.secrets[secret];
+    }
 
-    return data;
+    const fullPath = getFullPath(this.secretsDirectory, secret);
+    this.secrets[secret] = formatSecret(fullPath);
+
+    return this.secrets[secret];
   }
 
   getAllSecrets() {
+
+    if (!isObject(this.secrets)) {
+      return {};
+    }
+
+    if (this.useCache && !objectIsEmpty(this.secrets)) {
+      return this.secrets;
+    }
+
     if (fs.existsSync(this.secretsDirectory)) {
       const files = fs.readdirSync(this.secretsDirectory);
 
