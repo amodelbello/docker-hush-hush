@@ -14,6 +14,12 @@ const secretName = 'fieldName';
 const secret = hush.getSecret(secretName);
 console.log(secret);
 
-// Change default dir
+// Change default dir (i.e. other than /run/secrets)
 hush.setBasePath('./different/path');
+
+// Disable caching. 
+// By default values will be accessed via fs once.
+// After that they are retrieved from memory.
+// Using this ensures they are always accessed via fs.
+hush.disableCache();
 ```
