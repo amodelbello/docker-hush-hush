@@ -22,4 +22,7 @@ hush.setBasePath('./different/path');
 // After that they are retrieved from memory.
 // Using this ensures they are always accessed via fs.
 hush.disableCache();
+
+// Here's a good way to get all secrets into process.env in one step
+process.env = { ...process.env, ...hush.getAllSecrets() };
 ```
